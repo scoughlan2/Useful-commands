@@ -1,0 +1,66 @@
+## Download base image ubuntu 20.04
+FROM ubuntu:20.04
+
+## Install system libraries required to build tools
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update \
+    && apt-get install -y  \
+    apt \
+    build-essential \
+    curl \
+    gcc \
+    git \
+    libcurl4-openssl-dev \
+    libssl-dev libv8-dev \
+    libbz2-dev \
+    udunits-bin \
+    libudunits2-* \
+    libncurses-dev \
+    libxml2-dev \
+    liblzma-dev \
+    openjdk-11-jdk-headless \
+    pip \
+    python \
+    wget \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+    
+    
+## update system libraries
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get clean
+
+
+## Set working directory
+WORKDIR /home/worker
+
+## Install pip python packages
+COPY ./requirements.txt .
+
+RUN pip install -r requirements.txt
+
+## Install conda -should update this to use specific version for better reprodu
+RUN  wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+   && bash Miniconda3-latest-Linux-x86_64.sh -b \
+   && rm Miniconda3-latest-Linux-x86_64.sh
+
+## Make conda available in the PATH
+ENV PATH=$PATH:/home/worker/miniconda3/condabin:/home/worker/miniconda3/bin
+RUN echo $PATH
+
+# Add user
+RUN addgroup --system worker \
+    && adduser --system --ingroup worker worker
+
+RUN chown worker:worker -R /home/worker
+
+USER worker
+
+
+
+
+
+
+
+
