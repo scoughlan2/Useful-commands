@@ -40,12 +40,11 @@ COPY ./requirements.txt .
 
 RUN pip install -r requirements.txt
 
-## Install conda -should update this to use specific version for better reprodu
-RUN  wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
-   && bash Miniconda3-latest-Linux-x86_64.sh -b \
-   && rm Miniconda3-latest-Linux-x86_64.sh
+#Install conda
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+   && bash Miniconda3-latest-Linux-x86_64.sh -b -p /home/worker/miniconda3
 
-## Make conda available in the PATH
+#Make conda available in the PATH
 ENV PATH=$PATH:/home/worker/miniconda3/condabin:/home/worker/miniconda3/bin
 RUN echo $PATH
 
